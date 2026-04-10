@@ -29,52 +29,59 @@ Udaan Future School is an educational institution focused on student growth and 
 def home():
     return "Udaan Chatbot Backend Running 🚀"
 
+
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
         user_message = request.json.get("message")
 
-        response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "https://udaan-chatbot.onrender.com",
-                "X-Title": "Udaan Chatbot"
-            },
-            json={
-                models = ["meta-llama/llama-3.3-70b-instruct:free",
-                          "openai/gpt-oss-20b:free"
-                         ],
-                "messages": [
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": user_message}
-                ],
-                "temperature": 0.6,
-                "max_tokens": 500
-            }
-        )
+        # 🔥 Fallback models (important for stability)
+        models = [
+            "openai/gpt-oss-20b:free",
+            "meta-llama/llama-3.3-70b-instruct:free"
+        ]
 
-        data = response.json()
+        for model in models:
+            response = requests.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": "https://udaan-chatbot.onrender.com",
+                    "X-Title": "Udaan Future School Chatbot"
+                },
+                json={
+                    "model": model,
+                    "messages": [
+                        {"role": "system", "content": SYSTEM_PROMPT},
+                        {"role": "user", "content": user_message}
+                    ],
+                    "temperature": 0.6,
+                    "max_tokens": 700
+                }
+            )
 
-        # 🔥 PRINT FULL RESPONSE IN LOGS
-        print("OPENROUTER RESPONSE:", data)
+            data = response.json()
 
-        # SAFE CHECK
-        if "choices" not in data:
-            return jsonify({
-                "reply": "OpenRouter Error: " + str(data)
-            })
+            # 🔥 Debug safety (prevents crashes)
+            if "choices" in data:
+                return jsonify({
+                    "reply": data["choices"][0]["message"]["content"]
+                })
+
+            print("Model failed:", model)
+            print("Response:", data)
 
         return jsonify({
-            "reply": data["choices"][0]["message"]["content"]
+            "reply": "All AI models are busy right now. Please try again in a few seconds."
         })
 
     except Exception as e:
         print("ERROR:", e)
         return jsonify({
-            "reply": "Server crashed. Check logs."
+            "reply": "Sorry, the chatbot is currently unavailable."
         })
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
