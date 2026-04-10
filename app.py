@@ -38,7 +38,9 @@ def chat():
             "https://openrouter.ai/api/v1/chat/completions",
             headers={
                 "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://udaan-chatbot.onrender.com",
+                "X-Title": "Udaan Chatbot"
             },
             json={
                 "model": "meta-llama/llama-3.3-70b-instruct:free",
@@ -47,20 +49,29 @@ def chat():
                     {"role": "user", "content": user_message}
                 ],
                 "temperature": 0.6,
-                "max_tokens": 700
+                "max_tokens": 500
             }
         )
 
         data = response.json()
 
-        reply = data["choices"][0]["message"]["content"]
+        # 🔥 PRINT FULL RESPONSE IN LOGS
+        print("OPENROUTER RESPONSE:", data)
 
-        return jsonify({"reply": reply})
+        # SAFE CHECK
+        if "choices" not in data:
+            return jsonify({
+                "reply": "OpenRouter Error: " + str(data)
+            })
+
+        return jsonify({
+            "reply": data["choices"][0]["message"]["content"]
+        })
 
     except Exception as e:
-        print(e)
+        print("ERROR:", e)
         return jsonify({
-            "reply": "Sorry, the chatbot is currently unavailable."
+            "reply": "Server crashed. Check logs."
         })
 
 if __name__ == "__main__":
