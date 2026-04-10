@@ -43,10 +43,9 @@ def chat():
                 "X-Title": "Udaan Chatbot"
             },
             json={
-                models = [
-    "meta-llama/llama-3.3-70b-instruct:free",
-    "openai/gpt-oss-20b:free"
-],
+                models = ["meta-llama/llama-3.3-70b-instruct:free",
+                          "openai/gpt-oss-20b:free"
+                         ],
                 "messages": [
                     {"role": "system", "content": SYSTEM_PROMPT},
                     {"role": "user", "content": user_message}
