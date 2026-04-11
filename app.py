@@ -37,7 +37,7 @@ def chat():
 
         # 🔥 Fallback models (important for stability)
         models = [
-            "openai/gpt-oss-20b:free",
+            "google/gemma-3-12b-it:free",
             "meta-llama/llama-3.3-70b-instruct:free"
         ]
 
