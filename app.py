@@ -37,8 +37,7 @@ def chat():
 
         # 🔥 Fallback models (important for stability)
         models = [
-            "google/gemma-3-12b-it:free",
-            "meta-llama/llama-3.3-70b-instruct:free"
+            "cognitivecomputations/dolphin-mistral-24b-venice-edition:free"
         ]
 
         for model in models:
