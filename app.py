@@ -38,7 +38,7 @@ def chat():
         # 🔥 Fallback models (important for stability)
         models = [
             "qwen/qwen2.5-7b-instruct:free",
-            "meta-llama/llama-3.1-8b-instruct:free"
+            "meta-llama/llama-3.3-70b-instruct:free"
         ]
 
         for model in models:
